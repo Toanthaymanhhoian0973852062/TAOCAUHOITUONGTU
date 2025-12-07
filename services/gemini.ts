@@ -1,8 +1,29 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GeneratedResponse, MathProblem, ProblemConfig } from "../types";
 
-// Initialize the client using process.env.API_KEY as per guidelines.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper function to safely get the API Key in different environments (Vite/Vercel vs Node)
+const getApiKey = (): string => {
+  // Check for Vite environment variable (Vercel standard)
+  // @ts-ignore
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+    // @ts-ignore
+    return import.meta.env.VITE_API_KEY;
+  }
+  
+  // Check for Node/Process environment variable safely (Fallback)
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {
+    // Ignore reference errors if process is not defined
+  }
+
+  return ""; 
+};
+
+const apiKey = getApiKey();
+const ai = new GoogleGenAI({ apiKey });
 
 const fileToBase64 = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -171,6 +192,6 @@ export const generateSimilarProblems = async (
 
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("Đã có lỗi xảy ra khi xử lý yêu cầu. Vui lòng kiểm tra lại file hoặc API Key.");
+    throw new Error("Đã có lỗi xảy ra khi xử lý yêu cầu. Vui lòng kiểm tra API Key trong Vercel Settings.");
   }
 };

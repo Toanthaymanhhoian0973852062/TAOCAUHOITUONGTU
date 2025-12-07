@@ -28,3 +28,5 @@ export interface HistoryItem {
   problems: MathProblem[];
   config: ProblemConfig;
 }
+
+declare var html2pdf: any;
