@@ -1,10 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GeneratedResponse, MathProblem, ProblemConfig } from "../types";
 
-const apiKey = process.env.API_KEY;
-
-// Initialize the client once. 
-const ai = new GoogleGenAI({ apiKey: apiKey || '' });
+// Initialize the client using process.env.API_KEY as per guidelines.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const fileToBase64 = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -25,10 +23,6 @@ export const generateSimilarProblems = async (
   config: ProblemConfig,
   additionalInstructions?: string
 ): Promise<{ problems: MathProblem[], originalText: string }> => {
-  if (!apiKey) {
-    throw new Error("API Key chưa được cấu hình.");
-  }
-
   const modelId = "gemini-2.5-flash"; 
   const totalQuestions = config.level1 + config.level2 + config.level3;
   
@@ -167,7 +161,7 @@ export const generateSimilarProblems = async (
 
     const parsedData = JSON.parse(responseText) as GeneratedResponse;
     
-    // If input was string, use it as fallback if original_text is empty
+    // If input is string, use it as fallback if original_text is empty
     const originalText = parsedData.original_text || (typeof input === 'string' ? input : "Không thể trích xuất đề bài gốc");
 
     return {
@@ -177,6 +171,6 @@ export const generateSimilarProblems = async (
 
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("Đã có lỗi xảy ra khi xử lý yêu cầu. Vui lòng kiểm tra lại file hoặc nội dung.");
+    throw new Error("Đã có lỗi xảy ra khi xử lý yêu cầu. Vui lòng kiểm tra lại file hoặc API Key.");
   }
 };
