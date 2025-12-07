@@ -1,0 +1,5 @@
+{
+  "name": "iMath - Tạo Bài Tập Tự Luyện",
+  "description": "Ứng dụng AI giúp giáo viên và học sinh tạo ra 10 bài toán tương tự từ một đề bài mẫu, hỗ trợ xuất file Word.",
+  "requestFramePermissions": []
+}
